@@ -28,3 +28,5 @@ module Szamlazz
     attr_accessor :label, :quantity, :unit, :vat, :net_unit_price, :gross_unit_price, :comment
   end
 end
+
+require_relative "szamlazz/client"
