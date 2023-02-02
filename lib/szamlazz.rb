@@ -21,12 +21,16 @@ module Szamlazz
   end
 
   class Buyer < Base
-    attr_accessor :address, :post_address, :tax_number, :issuer_name, :identifier, :phone, :comment
+    attr_accessor :address, :post_address, :tax_number, :issuer_name, :identifier, :phone, :comment, :send_email,
+                  :name, :email
   end
 
-  class Item < Base
-    attr_accessor :label, :quantity, :unit, :vat, :net_unit_price, :gross_unit_price, :comment
+  class Invoice < Base
+    attr_accessor :payment_method, :currency, :language, :seller, :buyer, :items, :prepayment_invoice, :external_key,
+                  :issue_date, :fulfillment_date, :due_date, :exchange_bank, :exchange_rate, :order_id, :comment,
+                  :proform_invoice_id, :final_invoice, :correction_invoice, :proform, :prefix
   end
 end
 
 require_relative "szamlazz/client"
+require_relative "szamlazz/item"
