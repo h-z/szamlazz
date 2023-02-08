@@ -34,3 +34,4 @@ end
 
 require_relative "szamlazz/client"
 require_relative "szamlazz/item"
+require_relative "szamlazz/invoice_builder"

@@ -10,7 +10,15 @@ module Szamlazz
 
     attr_accessor :user, :einvoice, :password, :token, :response_version, :invoice_count, :download_invoice
 
+    def issue_invoice(invoice)
+      builder.build_invoice(invoice)
+    end
+
     private
+
+    def builder
+      @builder ||= InvoiceBuilder.new(self)
+    end
 
     def check_credentials
       return if (!user.nil? && !password.nil?) || !token.nil?
