@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "builder"
+require "nokogiri"
 
 module Szamlazz
   class InvoiceBuilder
@@ -17,7 +17,6 @@ module Szamlazz
       xsi = "http://www.w3.org/2001/XMLSchema-instance"
       location = "http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xsds/agent/xmlszamla.xsd"
 
-      builder.instruct!(:xml, encoding: "UTF-8")
       builder.xmlszamla(xmlns:, "xmlns:xsi": xsi, "xsi:schemaLocation": location) do |root|
         root.beallitasok do |b|
           b.felhasznalo(client.user) if client.user
@@ -86,12 +85,14 @@ module Szamlazz
           end
         end
       end
+
+      builder
     end
 
     private
 
     def builder
-      @builder ||= Builder::XmlMarkup.new
+      @builder ||= Nokogiri::XML::Builder.new
     end
 
     attr_reader :invoice, :client

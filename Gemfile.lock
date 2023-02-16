@@ -2,13 +2,12 @@ PATH
   remote: .
   specs:
     szamlazz (0.1.0)
-      builder (>= 2.1)
+      nokogiri (~> 1)
 
 GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
-    builder (3.2.4)
     diff-lcs (1.5.0)
     json (2.6.3)
     nokogiri (1.14.0-x86_64-darwin)
@@ -53,7 +52,6 @@ PLATFORMS
   x86_64-darwin-19
 
 DEPENDENCIES
-  nokogiri (~> 1)
   rake (~> 13.0)
   rspec (~> 3.0)
   rubocop (~> 1.21)
