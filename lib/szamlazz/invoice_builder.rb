@@ -38,7 +38,7 @@ module Szamlazz
           h.megjegyzes(invoice.comment)
           h.arfolyamBank(invoice.exchange_bank)
           h.arfolyam(invoice.exchange_rate)
-          h.rendelesSzamla(invoice.order_id)
+          h.rendelesSzam(invoice.order_id)
           h.dijbekeroSzamlaszam(invoice.proform_invoice_id)
           h.elolegszamla(invoice.prepayment_invoice)
           h.vegszamla(invoice.final_invoice)
