@@ -4,9 +4,8 @@ module Szamlazz
   class Item < Base
     ZERO_VAT = %w[TAM AAM EU EUK MAA ÁKK TEHK HO KBAET].freeze
 
-    attr_accessor :label, :quantity, :unit, :vat, :net_unit_price, :gross_unit_price, :comment
-
-    attr_reader :net_value, :gross_value, :vat_value
+    attr_accessor :label, :quantity, :unit, :vat, :net_unit_price, :gross_unit_price, :comment, :vat_value, :net_value,
+                  :gross_value
 
     def initialize(params)
       super

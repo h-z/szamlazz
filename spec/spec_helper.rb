@@ -2,7 +2,6 @@
 
 require "szamlazz"
 require "rspec/xsd"
-require "pry-byebug"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

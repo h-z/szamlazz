@@ -16,13 +16,17 @@ module Szamlazz
     attr_accessor :name, :country, :zip, :city, :address
   end
 
+  class Payment < Base
+    attr_accessor :date, :amount, :title, :description
+  end
+
   class Seller < Base
     attr_accessor :bank_name, :bank_account, :email_address, :email_subject, :email_message
   end
 
   class Buyer < Base
-    attr_accessor :address, :post_address, :tax_number, :issuer_name, :identifier, :phone, :comment, :send_email,
-                  :name, :email
+    attr_accessor :name, :address, :post_address, :tax_number, :issuer_name, :identifier, :phone, :comment,
+                  :send_email, :email
   end
 
   class Invoice < Base
@@ -32,6 +36,9 @@ module Szamlazz
   end
 end
 
+require_relative "szamlazz/response"
 require_relative "szamlazz/client"
 require_relative "szamlazz/item"
 require_relative "szamlazz/invoice_builder"
+
+# require 'pry-byebug'
