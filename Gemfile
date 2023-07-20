@@ -17,3 +17,5 @@ gem "rspec-xsd"
 
 gem "pry"
 gem "pry-byebug"
+
+gem "simplecov", require: false, group: :test
