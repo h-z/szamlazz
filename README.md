@@ -1,39 +1,134 @@
 # Szamlazz
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/szamlazz`. To experiment with that code, run `bin/console` for an interactive prompt.
+A Ruby wrapper for the [Szamlazz.hu API](https://docs.szamlazz.hu/).
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+```shell
+bundle add szamlazz --git https://github.com/h-z/szamlazz
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'szamlazz'
+```
 
-## Development
+### Create a buyer
+```ruby
+buyer = Szamlazz::Buyer.new(
+  name: "Vevő neve",
+  tax_number: "12345678-1-42",
+  address: Szamlazz::Address.new(
+    name: "Cím név",
+    country: "Magyarország",
+    zip: "9999",
+    city: "Budapest",
+    address: "Kossuth utca 1."
+  ),
+  post_address: Szamlazz::Address.new(
+    name: "Számlázási cím név",
+    country: "Magyarország",
+    zip: "9999",
+    city: "Budapest",
+    address: "Kossuth utca 12."
+  )
+)
+```
+### Create a seller
+```ruby
+seller = Szamlazz::Seller.new(
+  bank_name: 'TheBank Bank',
+  bank_account: '11111111-11111111-11111111',
+)
+```
+### Create invoice items
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+You can create an item by passing the label, the VAT rate, the quantity and the gross or net unit price.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```ruby
+item = Szamlazz::Item.new({ label: "Valami cucc", gross_unit_price: 100, quantity: 3, vat: 87 })
+other_item = Szamlazz::Item.new({ label: "Cucc", net_unit_price: 82, quantity: 10, vat: 15 })
 
-## Contributing
+item.gross_value # => 300
+item.net_value # => 160.43
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/szamlazz. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/szamlazz/blob/master/CODE_OF_CONDUCT.md).
+other_item.net_value # => 820
+other_item.gross_value # => 943
+```
+### Create an invoice
+```ruby
+invoice = Szamlazz::Invoice.new(
+  issue_date: Date.today,
+  due_date: Date.today + 7,
+  fulfillment_date: Date.today,
+  payment_method: "Átutalás",
+  language: "hu",
+  currency: "HUF",
+  exchange_bank: "OTP",
+  external_key: 3333,
+  prefix: "MYCOMPANY",
+  seller: seller,
+  buyer: buyer,
+  items: [ item ]
+)
+```
 
-## License
+### Create a client
+```ruby
+client = Szamlazz::Client.new(
+  user: 'merchant-1@szamlazz.merchant',
+  password: 's3cr3t',
+  token: 'TKN-1234567890',
+  download_invoice: true
+)
+```
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+### Issue an invoice
+```ruby
+response = client.issue_invoice(invoice)
+# => response.success? = true
+# => response.invoice_number = "MYCOMPANY-00000001"
+```
 
-## Code of Conduct
+### Cancel an invoice
+```ruby
+response = client.reverse_invoice("MYCOMPANY-00000001")
+# => response.success? = true
+```
 
-Everyone interacting in the Szamlazz project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/szamlazz/blob/master/CODE_OF_CONDUCT.md).
+### Add credit to an invoice
+```ruby
+payments = [
+  Szamlazz::Payment.new(
+    amount: 10_000,
+    date: Date.today,
+    title: "Átutalás",
+    description: "Köszönjük a befizetést!"
+  )
+]
+response = client.credit_invoice("MYCOMPANY-00000001", payments, false)
+# => response.success? = true
+```
+
+### Download an invoice
+```ruby
+response = client.download_invoice_pdf(invoice)
+# => response.success? = true
+# => response.invoice_pdf = <PDF data>
+```
+
+### Download an invoice in XML format
+```ruby
+response = client.download_invoice_xml(invoice)
+# => response.success? = true
+# => response.invoice_xml = <Nokogiri::XML>
+```
+
+### Remove a proform invoice
+```ruby
+response = client.remove_proform_invoice("MYCOMPANY-00000001")
+# => response.success? = true
+```
